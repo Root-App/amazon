@@ -1,0 +1,113 @@
+RSpec.shared_examples_for "communicator_find_bucket" do
+  context "with a valid bucket" do
+    let(:bucket) { communicator.find_bucket(SpecHelper::TESTING_BUCKET) }
+
+    it "should find folders" do
+      folders = bucket.get_folders
+
+      expect(folders).to be_present
+      expect(folders).to be_an(Array)
+    end
+
+    it "should find files in folder" do
+      files = bucket.get_files_in_folder("public/account_facts/")
+
+      expect(files).to be_present
+      expect(files).to be_an(Array)
+    end
+
+    it "should get file link to s3" do
+      link = bucket.get_file_link("public/account_facts/", "2017-05-13-public.account_facts.csv")
+
+      expect(link).to be_present
+      expect(link).to start_with("https://")
+    end
+  end
+
+  context "cannot find valid bucket" do
+    let(:bad_bucket) { communicator.find_bucket("random_bucket") }
+
+    it "should raise error with get_folders" do
+      expect { bad_bucket.get_folders }.to raise_error(Aws::S3::Errors::NoSuchBucket)
+    end
+
+    it "should raise error with get_files_in_folder" do
+      expect { bad_bucket.get_files_in_folder("folder") }.to raise_error(Aws::S3::Errors::NoSuchBucket)
+    end
+  end
+
+  context "entered bad credentials" do
+    it "should raise bad credentials error" do
+      expect { bad_communicator.find_bucket(SpecHelper::TESTING_BUCKET) }.to raise_error(Aws::Sigv4::Errors::MissingCredentialsError)
+    end
+  end
+end
+
+RSpec.shared_examples_for "communicator_find_bucket_subdir" do
+  context "with a valid bucket" do
+    let(:bucket_subdir) { communicator.find_bucket_subdir(SpecHelper::TESTING_BUCKET_SUBDIR, SpecHelper::TESTING_BUCKET) }
+
+    it "should get folders" do
+      folders = bucket_subdir.get_folders
+
+      expect(folders).to be_present
+      expect(folders).to be_an(Array)
+    end
+
+    it "should get files in folder" do
+      files = bucket_subdir.get_files_in_folder("account_facts/")
+
+      expect(files).to be_present
+      expect(files).to be_an(Array)
+    end
+
+    it "should return a url" do
+      url = bucket_subdir.url
+
+      expect(url).to eq("s3://#{SpecHelper::TESTING_BUCKET}/#{SpecHelper::TESTING_BUCKET_SUBDIR}/")
+    end
+  end
+
+  context "cannot find valid bucket" do
+    let(:bad_bucket) { communicator.find_bucket_subdir("random_path", "random_bucket") }
+
+    it "should raise error with get_folders" do
+      expect { bad_bucket.get_folders }.to raise_error(Aws::S3::Errors::NoSuchBucket)
+    end
+
+    it "should raise error with get_files_in_folder" do
+      expect { bad_bucket.get_files_in_folder("folder") }.to raise_error(Aws::S3::Errors::NoSuchBucket)
+    end
+  end
+
+  context "entered bad credentials" do
+    it "should raise bad credentials error" do
+      expect { bad_communicator.find_bucket_subdir(SpecHelper::TESTING_BUCKET_SUBDIR, SpecHelper::TESTING_BUCKET) }.to raise_error(Aws::Sigv4::Errors::MissingCredentialsError)
+    end
+  end
+end
+
+RSpec.shared_examples_for "communicator_find_redshift" do
+  context "valid redshift" do
+    let(:valid_table) { communicator.find_redshift_table(SpecHelper::TESTING_REDSHIFT_TABLE_SCHEMA, SpecHelper::TESTING_REDSHIFT_TABLE_NAME, SpecHelper::TESTING_REDSHIFT_URL) }
+    let(:invalid_table) { communicator.find_redshift_table("fake_schema", "fake_table", SpecHelper::TESTING_REDSHIFT_URL) }
+
+    it "should fetch columns and meta data for valid table" do
+      results = valid_table.fetch_meta_data
+
+      expect(results).to be_present
+      expect(results.length).to be > 0
+
+      results.each do |result|
+        expect(result).to have_key(:column_name)
+        expect(result).to have_key(:data_type)
+        expect(result).to have_key(:comments)
+        expect(result).to have_key(:table_comments)
+      end
+    end
+
+    it "passes in a bad schema and/or databasae" do
+      expect { invalid_table.fetch_meta_data }.to raise_error(Sequel::DatabaseError)
+    end
+  end
+end
