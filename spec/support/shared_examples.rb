@@ -22,6 +22,18 @@ RSpec.shared_examples_for "communicator_find_bucket" do
       expect(link).to be_present
       expect(link).to start_with("https://")
     end
+
+    it "should upload and download a file to s3" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+      bucket.upload_file("sample.file", file.path)
+
+      downloaded_file = bucket.download_file("sample.file", "out.txt")
+      expect(downloaded_file.class).to be(Tempfile)
+      expect(downloaded_file.path).to include("out.txt")
+    end
   end
 
   context "cannot find valid bucket" do

@@ -1,12 +1,18 @@
 module Amazon
   class FakeCommunicator
+    def self.data
+      @data ||= {}
+    end
     def initialize(access_key_id, secret_access_key, region)
       @access_key_id = access_key_id
       @secret_access_key = secret_access_key
       @region = region
+      @bucket_files
     end
 
     def find_bucket(bucket_name)
+      FakeCommunicator.data[bucket_name] ||= {}
+      @bucket_files = FakeCommunicator.data[bucket_name]
       _fake_bucket(bucket_name)
     end
 
@@ -77,6 +83,7 @@ module Amazon
       bucket = Object.new
       bucket.instance_variable_set(:@bucket_name, bucket_name)
       bucket.instance_variable_set(:@region, @region)
+      bucket.instance_variable_set(:@bucket_files, @bucket_files)
 
       def bucket.get_folders(folder: "")
         case @bucket_name
@@ -112,11 +119,14 @@ module Amazon
       end
 
       def bucket.download_file(object_name, local_file_name)
-        local_file_name
+        Tempfile.open(local_file_name) do |file|
+          file.write(@bucket_files[object_name])
+          file
+        end
       end
 
       def bucket.upload_file(object_name, local_file_name, content_type: nil)
-        true
+        @bucket_files[object_name] = File.read(local_file_name)
       end
 
       def bucket.region
