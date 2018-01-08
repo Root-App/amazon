@@ -3,6 +3,13 @@ RSpec.shared_examples_for "communicator_find_bucket" do
     let(:bucket) { communicator.find_bucket(SpecHelper::TESTING_BUCKET) }
 
     it "should find folders" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+
+      bucket.upload_file("public/account_facts/sample.file", file.path)
+
       folders = bucket.get_folders
 
       expect(folders).to be_present
@@ -10,6 +17,13 @@ RSpec.shared_examples_for "communicator_find_bucket" do
     end
 
     it "should find files in folder" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+
+      bucket.upload_file("public/account_facts/sample.file", file.path)
+
       files = bucket.get_files_in_folder("public/account_facts/")
 
       expect(files).to be_present
@@ -72,9 +86,17 @@ end
 
 RSpec.shared_examples_for "communicator_find_bucket_subdir" do
   context "with a valid bucket" do
+    let(:bucket) { communicator.find_bucket(SpecHelper::TESTING_BUCKET) }
     let(:bucket_subdir) { communicator.find_bucket_subdir(SpecHelper::TESTING_BUCKET_SUBDIR, SpecHelper::TESTING_BUCKET) }
 
     it "should get folders" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+
+      bucket.upload_file("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file.path)
+
       folders = bucket_subdir.get_folders
 
       expect(folders).to be_present
@@ -82,6 +104,13 @@ RSpec.shared_examples_for "communicator_find_bucket_subdir" do
     end
 
     it "should get files in folder" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+
+      bucket.upload_file("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file.path)
+
       files = bucket_subdir.get_files_in_folder("account_facts/")
 
       expect(files).to be_present

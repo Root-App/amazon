@@ -94,8 +94,12 @@ module Amazon
         case @bucket_name
         when "random_bucket" then raise Aws::S3::Errors.error_class('NoSuchBucket').new("test", "test")
         else
-          return ["public/", "server_public/"] if folder.empty?
-          ["#{folder}accounts", "#{folder}account_facts"]
+          folders = []
+          @bucket_files.each do |bucket_file|
+            folder = bucket_file.split("/")
+            folders << folder[0] unless folder.length.zero?
+          end
+          folders
         end
       end
 
@@ -103,12 +107,8 @@ module Amazon
         case @bucket_name
         when "random_bucket" then raise Aws::S3::Errors.error_class('NoSuchBucket').new("test", "test")
         else
-          if @bucket_files.present? && @bucket_files.keys.present?
-            @bucket_files.keys.map do |file|
-              file.sub(folder, "")
-            end
-          else
-            ["2015-05-12-file.csv", "2015-05-13-file.csv"]
+          @bucket_files.keys.map do |file|
+            file.sub(folder, "")
           end
         end
       end
@@ -126,7 +126,7 @@ module Amazon
       end
 
       def bucket.find_files(file)
-        ["file_name.csv", "file_name.csv"]
+        @bucket_files.keys.select { |bucket_file| bucket_file.include?(file) }
       end
 
       def bucket.download_file(object_name, local_file_name)
