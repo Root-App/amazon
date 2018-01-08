@@ -21,7 +21,7 @@ RSpec.shared_examples_for "communicator_find_bucket" do
         f.write("hello world")
         f
       end
-      bucket.upload_file("sample.file", file.path)
+      bucket.upload_file("public/account_facts/sample.file", file.path)
 
       bucket = communicator.find_bucket(SpecHelper::TESTING_BUCKET)
 
