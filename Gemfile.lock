@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    amazon (0.0.4)
+    amazon (0.0.5)
       activesupport
       aws-sdk
       pg

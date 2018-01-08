@@ -3,6 +3,11 @@ module Amazon
     def self.data
       @data ||= {}
     end
+
+    def self.reset_data
+      @data = {}
+    end
+
     def initialize(access_key_id, secret_access_key, region)
       @access_key_id = access_key_id
       @secret_access_key = secret_access_key
