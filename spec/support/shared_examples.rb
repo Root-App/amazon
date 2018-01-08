@@ -16,6 +16,21 @@ RSpec.shared_examples_for "communicator_find_bucket" do
       expect(files).to be_an(Array)
     end
 
+    it "should find files in folder when uploaded" do
+      file = Tempfile.open("out.txt") do |f|
+        f.write("hello world")
+        f
+      end
+      bucket.upload_file("sample.file", file.path)
+
+      bucket = communicator.find_bucket(SpecHelper::TESTING_BUCKET)
+
+      files = bucket.get_files_in_folder("public/account_facts/")
+
+      expect(files).to be_present
+      expect(files).to include("sample.file")
+    end
+
     it "should get file link to s3" do
       link = bucket.get_file_link("public/account_facts/", "2017-05-13-public.account_facts.csv")
 

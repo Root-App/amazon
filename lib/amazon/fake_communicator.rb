@@ -98,7 +98,11 @@ module Amazon
         case @bucket_name
         when "random_bucket" then raise Aws::S3::Errors.error_class('NoSuchBucket').new("test", "test")
         else
-          ["2015-05-12-file.csv", "2015-05-13-file.csv"]
+          if @bucket_files.present? && @bucket_files.keys.present?
+            @bucket_files.keys
+          else
+            ["2015-05-12-file.csv", "2015-05-13-file.csv"]
+          end
         end
       end
 
