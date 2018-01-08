@@ -99,7 +99,9 @@ module Amazon
         when "random_bucket" then raise Aws::S3::Errors.error_class('NoSuchBucket').new("test", "test")
         else
           if @bucket_files.present? && @bucket_files.keys.present?
-            @bucket_files.keys
+            @bucket_files.keys.map do |file|
+              file.sub(folder, "")
+            end
           else
             ["2015-05-12-file.csv", "2015-05-13-file.csv"]
           end
