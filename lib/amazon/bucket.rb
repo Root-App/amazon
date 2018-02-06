@@ -70,6 +70,10 @@ module Amazon
       end
     end
 
+    def upload_data(object_name, data)
+      @bucket.object(object_name).put(:body => data)
+    end
+
     def download_file(object_name, local_file_name)
       object = @bucket.object(object_name)
       object.download_file(local_file_name)

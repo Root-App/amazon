@@ -140,6 +140,10 @@ module Amazon
         @bucket_files[object_name] = File.read(local_file_name)
       end
 
+      def bucket.upload_data(object_name, data)
+        @bucket_files[object_name] = data
+      end
+
       def bucket.region
         @region
       end
