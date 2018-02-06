@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name    = "amazon"
-  s.version = "0.0.7"
+  s.version = "0.0.9"
   s.authors = ["Root"]
   s.email   = ["devs@joinroot.com"]
   s.summary = "Integration with Amazon SDK"
