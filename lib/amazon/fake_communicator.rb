@@ -136,6 +136,10 @@ module Amazon
         end
       end
 
+      def bucket.download_data(object_name)
+        @bucket_files[object_name]
+      end
+
       def bucket.upload_file(object_name, local_file_name, content_type: nil)
         @bucket_files[object_name] = File.read(local_file_name)
       end
