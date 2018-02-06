@@ -80,6 +80,10 @@ module Amazon
       local_file_name
     end
 
+    def download_data(object_name)
+      @bucket.object(object_name).get.body.read
+    end
+
     private
 
     def _list_objects(prefix)
