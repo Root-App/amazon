@@ -95,7 +95,7 @@ module Amazon
         when "random_bucket" then raise Aws::S3::Errors.error_class('NoSuchBucket').new("test", "test")
         else
           folders = []
-          @bucket_files.each do |bucket_file|
+          @bucket_files.keys.each do |bucket_file|
             folder = bucket_file.split("/")
             folders << folder[0] unless folder.length.zero?
           end
