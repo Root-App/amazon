@@ -33,6 +33,18 @@ module Amazon
         end
       end
 
+      def reload_from_sql(sql_string)
+        count_before = count
+
+        @connection.transaction do
+          @connection[Sequel.qualify(@schema_sym, @table_name_sym)].delete
+
+          @connection.run(_sql_insert_into_statement(sql_string))
+
+          raise Sequel::Rollback if count < count_before
+        end
+      end
+
       def unload_to_bucket(bucket, iam_role)
         output_file = _generate_s3_unload_filename(bucket.url)
         query = _s3_unload_statement(iam_role, output_file)
@@ -124,6 +136,11 @@ QUERY
           ORDER BY
             cols.ordinal_position::int;
 QUERY
+      end
+
+      def _sql_insert_into_statement(sql_string)
+        "INSERT INTO #{@schema}.#{@table_name}
+        #{sql_string}"
       end
     end
   end
