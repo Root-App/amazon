@@ -45,6 +45,17 @@ module Amazon
         end
       end
 
+      def rebuild_from_sql(sql_string)
+        count_before = count
+
+        @connection.transaction do
+          @connection.run(_sql_drop_table_statement)
+          @connection.run(_sql_create_table_as_statement(sql_string))
+
+          raise Sequel::Rollback if count < count_before
+        end
+      end
+
       def unload_to_bucket(bucket, iam_role)
         output_file = _generate_s3_unload_filename(bucket.url)
         query = _s3_unload_statement(iam_role, output_file)
@@ -140,6 +151,15 @@ QUERY
 
       def _sql_insert_into_statement(sql_string)
         "INSERT INTO #{@schema}.#{@table_name}
+        #{sql_string}"
+      end
+
+      def _sql_drop_table_statement
+        "DROP TABLE #{@schema}.#{@table_name}"
+      end
+
+      def _sql_create_table_as_statement(sql_string)
+        "CREATE TABLE #{@schema}.#{@table_name} AS
         #{sql_string}"
       end
     end
