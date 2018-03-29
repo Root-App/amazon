@@ -155,7 +155,7 @@ QUERY
       end
 
       def _sql_drop_table_statement
-        "DROP TABLE #{@schema}.#{@table_name}"
+        "DROP TABLE #{@schema}.#{@table_name} CASCADE"
       end
 
       def _sql_create_table_as_statement(sql_string)
