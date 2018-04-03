@@ -33,7 +33,7 @@ module Amazon
         end
       end
 
-      def reload_from_sql(sql_string)
+      def reload_from_sql(sql_string, enforce_count = false)
         count_before = count
 
         @connection.transaction do
@@ -41,18 +41,18 @@ module Amazon
 
           @connection.run(_sql_insert_into_statement(sql_string))
 
-          raise Sequel::Rollback if count < count_before
+          raise Sequel::Rollback if count < count_before && enforce_count
         end
       end
 
-      def rebuild_from_sql(sql_string)
+      def rebuild_from_sql(sql_string, enforce_count = false)
         count_before = count
 
         @connection.transaction do
           @connection.run(_sql_drop_table_statement)
           @connection.run(_sql_create_table_as_statement(sql_string))
 
-          raise Sequel::Rollback if count < count_before
+          raise Sequel::Rollback if count < count_before && enforce_count
         end
       end
 
