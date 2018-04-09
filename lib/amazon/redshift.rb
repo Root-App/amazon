@@ -25,7 +25,7 @@ module Amazon
         count_before = count
 
         @connection.transaction do
-          @connection[Sequel.qualify(@schema_sym, @table_name_sym)].truncate
+          @connection[Sequel.qualify(@schema_sym, @table_name_sym)].delete
 
           @connection.run(_s3_copy_statement(bucket, iam_role, encoding, ignore_header))
 
