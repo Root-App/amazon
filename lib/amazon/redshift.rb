@@ -31,6 +31,8 @@ module Amazon
 
           raise Sequel::Rollback if count < count_before
         end
+
+        @connection.run(_vacuum_table_statement)
       end
 
       def reload_from_sql(sql_string, enforce_count = false)
@@ -43,6 +45,8 @@ module Amazon
 
           raise Sequel::Rollback if count < count_before && enforce_count
         end
+
+        @connection.run(_vacuum_table_statement)
       end
 
       def rebuild_from_sql(sql_string, enforce_count = false)
@@ -86,6 +90,10 @@ module Amazon
       end
 
       private
+
+      def _vacuum_table_statement
+        "VACUUM #{@schema}.#{@table_name}"
+      end
 
       def _s3_copy_statement(bucket, iam_role, encoding, ignore_header)
         "COPY #{@table_name_sym}
