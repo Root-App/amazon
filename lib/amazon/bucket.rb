@@ -70,8 +70,13 @@ module Amazon
       end
     end
 
-    def upload_data(object_name, data)
-      @bucket.object(object_name).put(:body => data)
+    def upload_data(object_name, data, content_type: nil)
+      object = @bucket.object(object_name)
+      if content_type.present?
+        object.put(:body => data, :content_type => content_type)
+      else
+        object.put(:body => data)
+      end
     end
 
     def download_file(object_name, local_file_name)
