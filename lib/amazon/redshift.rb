@@ -21,6 +21,10 @@ module Amazon
         @table_name_sym = table_name.to_sym
       end
 
+      def append_data_from_bucket(bucket, iam_role, encoding: "UTF8", ignore_header: true)
+        @connection.run(_s3_copy_statement(bucket, iam_role, encoding, ignore_header))
+      end
+
       def reload_from_bucket(bucket, iam_role, encoding: "UTF8", ignore_header: true)
         count_before = count
 
@@ -82,13 +86,14 @@ module Amazon
       end
 
       def respond_to_missing?(method_name, include_private = false)
-        @connection[@table_name].respond_to?(method_name, include_private)
+        qualified_table = Sequel.qualify(@schema_sym, @table_name_sym)
+        @connection[qualified_table].respond_to?(method_name, include_private)
       end
 
       private
 
       def _s3_copy_statement(bucket, iam_role, encoding, ignore_header)
-        "COPY #{@table_name_sym}
+        "COPY #{@schema}.#{@table_name}
         FROM '#{bucket.url}'
         iam_role '#{iam_role}'
         region '#{bucket.region}'
