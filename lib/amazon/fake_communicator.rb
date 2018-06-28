@@ -148,6 +148,10 @@ module Amazon
         @bucket_files[object_name] = data
       end
 
+      def bucket.move_object(object_name, target_path)
+        @bucket_files[target_path] = @bucket_files.delete(object_name)
+      end
+
       def bucket.region
         @region
       end

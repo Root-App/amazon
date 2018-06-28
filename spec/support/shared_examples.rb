@@ -63,6 +63,28 @@ RSpec.shared_examples_for "communicator_find_bucket" do
       expect(downloaded_file.class).to be(Tempfile)
       expect(downloaded_file.path).to include("out.txt")
     end
+
+    context "move_to" do
+      let(:file_path) { "my/file/path.file" }
+      let(:new_path) { "new/file/path.file" }
+      let(:file) do
+        Tempfile.open("out.txt") do |f|
+          f.write("hello world")
+          f.path
+        end
+      end
+
+      before { bucket.upload_file(file_path, file) }
+
+      it "should move file" do
+        bucket.move_object(file_path, new_path)
+
+        files = bucket.get_files_in_folder("")
+
+        expect(files).to include(new_path)
+        expect(files).not_to include(file_path)
+      end
+    end
   end
 
   context "cannot find valid bucket" do

@@ -89,6 +89,10 @@ module Amazon
       @bucket.object(object_name).get.body.read
     end
 
+    def move_object(object_name, target_name)
+      @bucket.object(object_name).move_to("#{@bucket.name}/#{target_name}")
+    end
+
     private
 
     def _list_objects(prefix)
