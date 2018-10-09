@@ -37,10 +37,13 @@ module Amazon
         end
       end
 
-      def reload_from_sql(sql_string, enforce_count = false)
+      def reload_from_sql(sql_string, enforce_count = false, statement_timeout_in_minutes: nil)
         count_before = count
 
         @connection.transaction do
+          if statement_timeout_in_minutes
+            @connection.run("SET LOCAL statement_timeout TO #{statement_timeout_in_minutes * 60 * 1000}")
+          end
           @connection[Sequel.qualify(@schema_sym, @table_name_sym)].delete
 
           @connection.run(_sql_insert_into_statement(sql_string))
@@ -49,10 +52,13 @@ module Amazon
         end
       end
 
-      def rebuild_from_sql(sql_string, enforce_count = false)
+      def rebuild_from_sql(sql_string, enforce_count = false, statement_timeout_in_minutes: nil)
         count_before = count
 
         @connection.transaction do
+          if statement_timeout_in_minutes
+            @connection.run("SET LOCAL statement_timeout TO #{statement_timeout_in_minutes * 60 * 1000}")
+          end
           @connection.run(_sql_drop_table_statement)
           @connection.run(_sql_create_table_as_statement(sql_string))
 
