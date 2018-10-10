@@ -52,7 +52,7 @@ module Amazon
         end
       end
 
-      def rebuild_from_sql(sql_string, enforce_count = false, statement_timeout_in_minutes: nil)
+      def rebuild_from_sql(sql_string, table_attributes = nil, enforce_count = false, statement_timeout_in_minutes: nil)
         count_before = count
 
         @connection.transaction do
@@ -60,7 +60,7 @@ module Amazon
             @connection.run("SET LOCAL statement_timeout TO #{statement_timeout_in_minutes * 60 * 1000}")
           end
           @connection.run(_sql_drop_table_statement)
-          @connection.run(_sql_create_table_as_statement(sql_string))
+          @connection.run(_sql_create_table_as_statement(sql_string, table_attributes))
 
           raise Sequel::Rollback if count < count_before && enforce_count
         end
@@ -169,9 +169,10 @@ QUERY
         "DROP TABLE #{@schema}.#{@table_name} CASCADE"
       end
 
-      def _sql_create_table_as_statement(sql_string)
-        "CREATE TABLE #{@schema}.#{@table_name} AS
-        #{sql_string}"
+      def _sql_create_table_as_statement(sql_string, table_attributes = nil)
+        ["CREATE TABLE #{@schema}.#{@table_name}",
+         table_attributes,
+         "AS #{sql_string}"].compact.join(" ")
       end
     end
   end
