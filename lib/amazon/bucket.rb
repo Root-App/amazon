@@ -14,6 +14,15 @@ module Amazon
 
     attr_reader :region
 
+    def put_object_acl(bucket_name, object_key, acl)
+      client = @s3_resource.client
+      client.put_object_acl({
+        acl: acl,
+        bucket: bucket_name,
+        key: object_key,
+      })
+    end
+
     def get_folders(folder: "")
       objects = _list_objects(folder)
 

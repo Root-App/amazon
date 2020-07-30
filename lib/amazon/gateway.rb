@@ -13,6 +13,10 @@ module Amazon
       @communicator_strategy = config[:communicator_strategy]
     end
 
+    def put_object_acl(bucket_name, object_key, acl)
+      _communicator.put_object_acl(bucket_name, object_key, acl)
+    end
+
     def find_bucket(bucket_name)
       _communicator.find_bucket(bucket_name)
     end
