@@ -165,20 +165,6 @@ RSpec.shared_examples_for "communicator_find_bucket_subdir" do
   end
 end
 
-RSpec.shared_examples_for "communicator_put_object_acl" do
-  let(:bucket) { communicator.find_bucket(SpecHelper::TESTING_BUCKET) }
-  
-  it "should change the acl and get back an acknowledgement" do
-    file = Tempfile.open("out.txt") do |f|
-      f.write("hello world")
-      f
-    end
-    bucket.upload_file("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file.path)
-    result = communicator.put_object_acl(SpecHelper::TESTING_BUCKET, "#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", "public-read") 
-    expect(result.request_charged).equal?("RequestCharged")
-  end
-end
-
 RSpec.shared_examples_for "communicator_find_redshift" do
   context "valid redshift" do
     let(:valid_table) { communicator.find_redshift_table(SpecHelper::TESTING_REDSHIFT_TABLE_SCHEMA, SpecHelper::TESTING_REDSHIFT_TABLE_NAME, SpecHelper::TESTING_REDSHIFT_URL) }

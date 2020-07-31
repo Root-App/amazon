@@ -21,15 +21,6 @@ module Amazon
       _fake_bucket(bucket_name)
     end
 
-    def put_object_acl(bucket_name, object_key, acl)
-      s3 = Aws::S3::Client.new(stub_responses: true)
-      s3.put_object_acl({
-        acl: acl,
-        bucket: bucket_name,
-        key: object_key,
-      })
-    end
-
     def find_bucket_subdir(path, bucket_name)
       bucket = _fake_bucket(bucket_name)
 

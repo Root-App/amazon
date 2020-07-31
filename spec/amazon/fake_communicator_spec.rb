@@ -8,10 +8,6 @@ RSpec.describe Amazon::FakeCommunicator do
     it_behaves_like "communicator_find_bucket"
   end
 
-  describe "#put_object_acl" do
-    it_behaves_like "communicator_put_object_acl"
-  end
-
   describe "#find_redshift" do
     it_behaves_like "communicator_find_redshift"
   end

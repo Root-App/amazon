@@ -10,14 +10,6 @@ module Amazon
       Amazon::Bucket.new(bucket_name, @access_key_id, @secret_access_key, @region)
     end
 
-    def put_object_acl(bucket_name, object_key, acl)
-      Amazon::Bucket.put_object_acl({
-        acl: acl,
-        bucket: bucket_name,
-        key: object_key,
-      })
-    end
-
     def find_bucket_subdir(path, bucket_name)
       bucket = Amazon::Bucket.new(bucket_name, @access_key_id, @secret_access_key, @region)
       Amazon::BucketSubDir.new(path, bucket)
