@@ -144,7 +144,7 @@ module Amazon
         @bucket_files[object_name] = File.read(local_file_name)
       end
 
-      def bucket.upload_data(object_name, data, content_type: nil)
+      def bucket.upload_data(object_name, data, content_type: nil, acl: nil)
         @bucket_files[object_name] = data
       end
 
