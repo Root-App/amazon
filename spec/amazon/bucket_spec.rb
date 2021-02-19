@@ -16,8 +16,8 @@ RSpec.describe Amazon::Bucket do
     .with({:body => file, :acl=>"public-read", :content_type=>"image/png"})
     .and_return(OpenStruct.new({:data => Object.new}))
 
-    result = subect.upload_data("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file, :acl => "public-read", :content_type => "image/png") 
-    expect(result.data).to be 
+    result = subect.upload_data("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file, :acl => "public-read", :content_type => "image/png")
+    expect(result.data).to be
   end
 
   it "upload data correctly without acl or content type" do
@@ -32,7 +32,7 @@ RSpec.describe Amazon::Bucket do
     .with({:body => file})
     .and_return(OpenStruct.new({:data => Object.new}))
 
-    result = subect.upload_data("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file) 
-    expect(result.data).to be 
+    result = subect.upload_data("#{SpecHelper::TESTING_BUCKET_SUBDIR}/sample.file", file)
+    expect(result.data).to be
   end
 end

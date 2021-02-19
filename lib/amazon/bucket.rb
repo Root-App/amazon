@@ -3,11 +3,16 @@ require "aws-sdk"
 module Amazon
   class Bucket
     def initialize(bucket_name, access_key_id, access_secret_key, region)
-      @s3_resource = Aws::S3::Resource.new(
-        :region => region,
-        :access_key_id => access_key_id,
-        :secret_access_key => access_secret_key
-      )
+      if access_key_id.present? || access_secret_key.present?
+        @s3_resource = Aws::S3::Resource.new(
+          :region => region,
+          :access_key_id => access_key_id,
+          :secret_access_key => access_secret_key
+        )
+      else
+        @s3_resource = Aws::S3::Resource.new(:region => region)
+      end
+
       @bucket = @s3_resource.bucket(bucket_name)
       @region = region
     end

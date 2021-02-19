@@ -83,7 +83,7 @@ module Amazon
     private
 
     def _fake_bucket(bucket_name)
-      raise Aws::Sigv4::Errors::MissingCredentialsError unless @access_key_id.present? && @secret_access_key.present?
+      raise Aws::Sigv4::Errors::MissingCredentialsError if (@access_key_id.present? ^ @secret_access_key.present?)
 
       bucket = Object.new
       bucket.instance_variable_set(:@bucket_name, bucket_name)
